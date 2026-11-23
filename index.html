@@ -1,0 +1,625 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Daily Chinese</title>
+<meta name="theme-color" content="#0F1716">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="每日中文">
+<style>html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
+<style>
+/* Layout: one phone-width study column; lesson sections stack like a notebook, tone colours carry the pinyin. */
+:root{
+  --bg:#EDF2F0; --surface:#FFFFFF; --sunk:#E2EAE7; --ink:#182624; --muted:#596B68; --line:#D2DDDA;
+  --accent:#0E6656; --accent-ink:#FFFFFF; --accent-soft:#D5EBE5;
+  --you:#0E6656; --you-ink:#FFFFFF; --other:#FFFFFF;
+  --good:#1E7D45; --good-soft:#DCF0E3; --bad:#B3261E; --bad-soft:#F7DEDB;
+  --t1:#C62F3A; --t2:#C46E00; --t3:#23864F; --t4:#2C58C9; --t5:#7B8784;
+  --f-body:"Figtree","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-han:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --f-card:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-brush:"Ma Shan Zheng","Kaiti SC","STKaiti",cursive;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1716; --surface:#172220; --sunk:#1E2B28; --ink:#E4EEEB; --muted:#93A6A2; --line:#2A3936;
+  --accent:#4CC2A6; --accent-ink:#06201A; --accent-soft:#1C3B34;
+  --you:#2F9C84; --you-ink:#04140F; --other:#1E2B28;
+  --good:#5BD08A; --good-soft:#163526; --bad:#FF8A80; --bad-soft:#3E1C1A;
+  --t1:#FF6B70; --t2:#F2A33A; --t3:#5BD08A; --t4:#7EA2FF; --t5:#98A6A3;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1716; --surface:#172220; --sunk:#1E2B28; --ink:#E4EEEB; --muted:#93A6A2; --line:#2A3936;
+  --accent:#4CC2A6; --accent-ink:#06201A; --accent-soft:#1C3B34;
+  --you:#2F9C84; --you-ink:#04140F; --other:#1E2B28;
+  --good:#5BD08A; --good-soft:#163526; --bad:#FF8A80; --bad-soft:#3E1C1A;
+  --t1:#FF6B70; --t2:#F2A33A; --t3:#5BD08A; --t4:#7EA2FF; --t5:#98A6A3;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(12px + env(safe-area-inset-top,0px)) calc(48px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.zh{font-family:var(--f-han)}
+h2{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:700}
+
+/* header */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:8px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand .seal{font-family:var(--f-brush);font-size:40px;line-height:1;color:var(--accent)}
+.brand small{color:var(--muted);font-size:13px}
+.streak{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.streak b{color:var(--ink)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--sunk);border-radius:12px;padding:4px;gap:3px}
+.tabs button{border:0;background:transparent;border-radius:9px;padding:8px 2px;font-weight:600;font-size:12.5px;line-height:1.25;color:var(--muted)}
+.tabcount{display:inline-block;margin-left:4px;min-width:18px;padding:0 5px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:11px;line-height:18px;font-variant-numeric:tabular-nums}
+.icon.rev-on{background:var(--t2);border-color:var(--t2);color:var(--surface)}
+.icon.gotit{border-color:var(--good);color:var(--good)}
+.wex{display:flex;flex-direction:column;gap:1px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);font-size:14px;color:var(--muted)}
+.wex .zh{font-size:16px;color:var(--ink)}
+.opt{display:flex;flex-direction:column;gap:1px}
+.opt .op{font-size:13.5px;color:var(--muted)}
+.opt .oen{font-size:13.5px}
+.seal-cap{display:block;font-size:12px;color:var(--muted);margin-top:4px;font-family:var(--f-body)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* lesson head */
+.lhead{display:flex;flex-direction:column;gap:6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.chip.rev{background:var(--sunk);color:var(--ink)}
+.lhead h1{margin:0;font-size:26px;line-height:1.2;text-wrap:balance}
+.lhead p{margin:0;color:var(--muted)}
+
+.sec{display:flex;flex-direction:column;gap:12px}
+.sechead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.toggle{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600}
+.toggle[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* word cards */
+.words{display:flex;flex-direction:column;gap:10px}
+.word{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center}
+.word .han{font-family:var(--f-card);font-size:34px;font-weight:700;line-height:1.1;grid-row:span 2}
+.word .py{font-size:15px;font-weight:500;letter-spacing:.02em}
+.word .mean{color:var(--ink);font-size:19px;font-weight:600;line-height:1.3}
+.word .side{grid-row:span 2;display:flex;gap:6px}
+.word .more{grid-column:1/-1;border-top:1px dashed var(--line);margin-top:8px;padding-top:10px;display:flex;flex-direction:column;gap:2px}
+.word.known{border-color:var(--good);background:linear-gradient(var(--good-soft),var(--good-soft)) top/100% 4px no-repeat,var(--surface)}
+.reveal{border:0;background:var(--sunk);border-radius:8px;padding:2px 8px;font-size:14px;color:var(--muted);text-align:left;justify-self:start}
+.icon{border:1px solid var(--line);background:var(--surface);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+.icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon.on{background:var(--good);border-color:var(--good);color:var(--surface)}
+.ex .zh{font-size:17px}
+.ex .p{font-size:14px;color:var(--muted)}
+.ex .e{font-size:14px}
+
+.t1{color:var(--t1)}.t2{color:var(--t2)}.t3{color:var(--t3)}.t4{color:var(--t4)}.t5{color:var(--t5)}
+.tonekey{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.tonekey span{font-weight:700}
+
+/* structure */
+.pattern{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.pattern .big{font-family:var(--f-card);font-size:30px;font-weight:700;line-height:1.2}
+.pattern .big small{display:block;font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--muted);margin-top:2px}
+.pattern .explain{margin:0}
+.exrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--sunk)}
+.exrow > div{min-width:0;flex:1;display:flex;flex-direction:column;gap:1px}
+.exrow.her{background:var(--accent-soft)}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+
+/* dialogue */
+.setting{color:var(--muted);font-size:14px;margin:0}
+.chat{display:flex;flex-direction:column;gap:10px;background:var(--sunk);border-radius:var(--r);padding:14px 12px}
+.msg{max-width:86%;display:flex;flex-direction:column;gap:2px}
+.msg .who{font-size:12px;color:var(--muted);padding-inline:4px}
+.bubble{border-radius:16px;padding:9px 12px;display:flex;flex-direction:column;gap:2px;text-align:left;border:0;width:100%}
+.msg.other{align-self:flex-start}
+.msg.other .bubble{background:var(--other);border-top-left-radius:4px}
+.msg.you{align-self:flex-end}
+.msg.you .who{text-align:right}
+.msg.you .bubble{background:var(--you);color:var(--you-ink);border-top-right-radius:4px}
+.msg.you .p,.msg.you .e{color:inherit;opacity:.85}
+.bubble .zh{font-size:18px}
+.bubble .p{font-size:13.5px;color:var(--muted)}
+.bubble .e{font-size:14px;border-top:1px solid rgba(127,127,127,.25);margin-top:4px;padding-top:4px}
+.hidden-line .zh,.hidden-line .p{filter:blur(6px);user-select:none}
+.hidden-line::after{content:"Tap to check your line";font-size:12px;opacity:.85}
+.chatbar{display:flex;gap:8px;flex-wrap:wrap}
+
+/* quiz */
+.q{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
+.q .qt{font-weight:600}
+.opts{display:grid;gap:8px}
+.opt{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;text-align:left}
+.opt.right{background:var(--good-soft);border-color:var(--good)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.why{font-size:14px;color:var(--muted);margin:0}
+.score{font-weight:600;font-variant-numeric:tabular-nums}
+
+/* your turn */
+.turn{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
+.model{border-left:3px solid var(--accent);padding-left:10px;display:flex;flex-direction:column;gap:1px}
+
+/* use today */
+.today{background:var(--accent);color:var(--accent-ink);border-radius:var(--r);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.today > div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.today h2{color:inherit;opacity:.8}
+.today .zh{font-size:21px;font-weight:500}
+.today .icon{background:transparent;border-color:currentColor;color:inherit}
+
+/* history */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;width:100%}
+.item .d{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+.item .t{font-weight:600}
+.item > div{min-width:0}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:28px 18px;text-align:center;color:var(--muted)}
+.empty .seal{font-family:var(--f-brush);font-size:48px;color:var(--accent);line-height:1}
+.note{font-size:13px;color:var(--muted);text-align:center}
+
+.btn{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:9px 16px;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* my words */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.stat b{display:block;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.wbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.wl{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.wrow{display:grid;grid-template-columns:1fr auto;gap:0 10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.wrow:first-child{border-top:0}
+.wtog{display:grid;grid-template-columns:auto 1fr auto;gap:0 12px;align-items:center;border:0;background:none;padding:4px 0;text-align:left;width:100%;min-width:0}
+.wrow .han{font-family:var(--f-card);font-size:24px;font-weight:700;min-width:2.2em}
+.wtext{display:flex;flex-direction:column;min-width:0}
+.wrow .mean{font-size:17px;font-weight:600;color:var(--ink);line-height:1.3}
+.pywrap{display:grid;grid-template-rows:0fr}
+.pywrap > div{overflow:hidden}
+.wrow .py{font-size:15px;font-weight:600;padding-top:4px;opacity:0}
+.wrow.open .pywrap{grid-template-rows:1fr}
+.wrow.open .py{opacity:1}
+.chev{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wrow.open .chev{transform:rotate(180deg)}
+@media (prefers-reduced-motion:no-preference){.pywrap{transition:grid-template-rows .22s ease}.wrow .py{transition:opacity .22s}.chev{transition:transform .22s}}
+.wrow .side{display:flex;gap:6px}
+.wrow.known .han{color:var(--good)}
+.syncnote{margin:0;text-align:center;font-size:12.5px;color:var(--muted)}
+.syncnote[data-s=synced]{color:var(--good)}
+.syncnote[data-s=local],.syncnote[data-s=error]{color:var(--t2)}
+.patitem .t{font-family:var(--f-han)}
+.flash{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;min-height:320px;justify-content:center}
+.flash .han{font-family:var(--f-card);font-size:64px;font-weight:700;line-height:1.1}
+.flash .py{font-size:22px;font-weight:600}
+.flash .mean{font-size:18px}
+.flash .ex{color:var(--muted);font-size:15px}
+.flashbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.prog{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.word,.opt,.bubble{transition:background .2s,border-color .2s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="seal" lang="zh-CN">每日中文</span><small>měirì Zhōngwén · daily Chinese</small></div>
+    <span class="streak" id="streak" hidden></span>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button id="tab-lesson" data-tab="lesson" role="tab" aria-selected="true">Lesson</button>
+    <button id="tab-words" data-tab="words" role="tab" aria-selected="false">My words</button>
+    <button id="tab-review" data-tab="review" role="tab" aria-selected="false">To review<span class="tabcount" id="revcount" hidden></span></button>
+    <button id="tab-dialogues" data-tab="dialogues" role="tab" aria-selected="false">Dialogues</button>
+    <button id="tab-all" data-tab="all" role="tab" aria-selected="false">All lessons</button>
+  </nav>
+  <main id="view">
+    <div class="empty"><div class="seal">学<span class="seal-cap">xué · learn</span></div><p>Loading your lessons…</p></div>
+  </main>
+  <p class="note" id="status" hidden></p>
+</div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const view = $("#view"), statusEl = $("#status");
+  let lessons = [];          // sorted newest first
+  let mode = "lesson";       // "lesson" | "all"
+  let current = null;        // date string
+  const prefs = { hideMeaning:false, practice:false };
+
+  // ---------- local storage (per viewer convenience) ----------
+  const store = {
+    get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+    set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  };
+  let known = new Set(store.get("dc-known", []));
+  // review list + known ticks: one shared doc in the page's db (the page is private to its owner), mirrored locally
+  let review = new Set(store.get("dc-review", []));
+  let progRef = null, progSaving = Promise.resolve(), pending = 0, syncState = "local";
+  function syncText(){ return ({local:"Saved on this device only, not synced yet", saving:"Saving…", synced:"Synced to your account ✓", error:"Couldn't sync. Kept on this device; reopen the page to try again."})[syncState]; }
+  function syncNote(){ return ''; }
+  function setSync(st){ syncState = st; document.querySelectorAll(".syncnote").forEach(el => { el.textContent = syncText(); el.dataset.s = st; }); }
+  function mirror(){ store.set("dc-review", [...review]); store.set("dc-known", [...known]); }
+  function saveProgress(){
+    mirror();
+    if(!progRef){ setSync("local"); return; }
+    const data = { review:[...review], known:[...known], updatedAt:new Date().toISOString() };
+    pending++; setSync("saving");
+    progSaving = progSaving.then(() => progRef.set(data)).then(() => { pending--; if(!pending) setSync("synced"); }, () => { pending--; setSync("error"); });
+  }
+  const saveReview = saveProgress;
+  const today = (() => { const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); })();
+  (function streak(){
+    const days = new Set(store.get("dc-days", [])); days.add(today); store.set("dc-days", [...days]);
+    let n = 0; const d = new Date();
+    for(;;){ const k = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      if(days.has(k)){ n++; d.setDate(d.getDate()-1); } else break; }
+    const el = $("#streak"); el.innerHTML = "<b>"+n+"</b> day streak"; el.hidden = false;
+  })();
+
+  // ---------- speech ----------
+  const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+  let zhVoice = null;
+  function pickVoice(){ try{ const vs = speechSynthesis.getVoices(); zhVoice = vs.find(v=>/zh[-_]CN/i.test(v.lang)) || vs.find(v=>/^zh/i.test(v.lang)) || null; }catch(e){} }
+  if(canSpeak){ pickVoice(); try{ speechSynthesis.onvoiceschanged = pickVoice; }catch(e){} }
+  function speak(text, onend){
+    if(!canSpeak) return;
+    try{
+      const u = new SpeechSynthesisUtterance(text); u.lang = "zh-CN"; u.rate = 0.8; if(zhVoice) u.voice = zhVoice;
+      if(onend) u.onend = onend;
+      speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function speakQueue(texts){ if(!canSpeak) return; try{ speechSynthesis.cancel(); }catch(e){} texts.forEach(t=>speak(t)); }
+
+  // ---------- helpers ----------
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const TONES = [["āēīōūǖĀĒĪŌŪǕ",1],["áéíóúǘÁÉÍÓÚǗ",2],["ǎěǐǒǔǚǍĚǏǑǓǙ",3],["àèìòùǜÀÈÌÒÙǛ",4]];
+  function toneOf(syl){ for(const [chars,t] of TONES){ for(const c of syl){ if(chars.includes(c)) return t; } } return 5; }
+  const colorPinyin = py => String(py||"").split(/\s+/).filter(Boolean).map(s => '<span class="t'+toneOf(s)+'">'+esc(s)+'</span>').join(" ");
+  const ICON = {
+    play:'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
+    check:'<svg viewBox="0 0 24 24"><path d="M5 12.5 10 17 19 7"/></svg>',
+    flag:'<svg viewBox="0 0 24 24"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg>'
+  };
+  const playBtn = (text, label) => canSpeak ? '<button class="icon" data-say="'+esc(text)+'" aria-label="Play '+esc(label||"audio")+'">'+ICON.play+'</button>' : "";
+  const fmtDate = ds => { const [y,m,d] = ds.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}); };
+  const line3 = o => o ? '<div class="zh" lang="zh-CN">'+esc(o.zh)+'</div><div class="p">'+esc(o.py)+'</div><div class="e">'+esc(o.en)+'</div>' : "";
+
+  // ---------- renderers ----------
+  function renderLesson(L){
+    const isRev = L.dayType === "revision";
+    let h = '<article class="wrap" style="gap:26px">';
+    h += '<div class="lhead"><div class="chips"><span class="chip'+(isRev?' rev':'')+'">'+(isRev?"REVISION DAY":"NEW LESSON")+'</span>'+(L.theme?'<span class="chip rev">'+esc(L.theme)+'</span>':'')+'</div>';
+    h += '<h1>'+esc(L.title || fmtDate(L.date))+'</h1><p>'+esc(fmtDate(L.date))+(L.intro?' · '+esc(L.intro):'')+'</p></div>';
+
+    if(L.words && L.words.length){
+      h += '<section class="sec"><div class="sechead"><h2>'+(isRev?"Review words":"5 new words")+'</h2><button class="toggle" id="t-mean" aria-pressed="'+prefs.hideMeaning+'">Hide meanings to test myself</button></div>';
+      h += '<div class="tonekey"><span class="t1">ā 1st</span><span class="t2">á 2nd</span><span class="t3">ǎ 3rd</span><span class="t4">à 4th</span><span class="t5">a neutral</span></div><div class="words">';
+      L.words.forEach((w,i) => {
+        const k = w.hanzi; const isK = known.has(k);
+        h += '<div class="word'+(isK?' known':'')+'" data-i="'+i+'"><div class="han" lang="zh-CN">'+esc(w.hanzi)+'</div>';
+        h += prefs.hideMeaning ? '<button class="reveal" data-open="'+i+'">Tap to see meaning</button>' : '<div class="mean">'+esc(w.english)+'</div>';
+        h += '<div class="side">'+playBtn(w.hanzi, w.hanzi)+'<button class="icon'+(isK?' on':'')+'" data-known="'+esc(k)+'" aria-pressed="'+isK+'" aria-label="I know this word">'+ICON.check+'</button></div>';
+        h += '<div class="py">'+colorPinyin(w.pinyin)+'</div>';
+        h += '<div class="more" id="more-'+i+'"'+(prefs.hideMeaning?' hidden':'')+'>';
+        if(prefs.hideMeaning) h += '<div class="mean">'+esc(w.english)+'</div>';
+        if(w.example) h += '<div class="ex" style="display:flex;gap:10px;align-items:flex-start"><div style="flex:1;min-width:0">'+line3(w.example)+'</div>'+playBtn(w.example.zh,"example")+'</div>';
+        if(w.note) h += '<div class="why">'+esc(w.note)+'</div>';
+        h += '</div></div>';
+      });
+      h += '</div></section>';
+    }
+
+    if(L.structures && L.structures.length){
+      L.structures.forEach(S => { h += patternHTML(S, isRev ? "Pattern review" : "Today's sentence pattern"); });
+    } else if(L.structure){ h += patternHTML(L.structure, "Today's sentence pattern"); }
+
+    if(L.dialogue && L.dialogue.lines){
+      h += '<section class="sec"><div class="sechead"><h2>Dialogue</h2>'+dialogueBar(L.date)+'</div>'+dialogueHTML(L.dialogue)+'</section>';
+    }
+
+    if(L.yourTurn && L.yourTurn.length){
+      h += '<section class="sec"><h2>Your turn</h2>';
+      L.yourTurn.forEach((t,i) => {
+        h += '<div class="turn"><div class="tag">'+esc(t.who || "She says")+'</div><div style="display:flex;gap:10px"><div style="flex:1;min-width:0">'+line3(t.prompt)+'</div>'+playBtn(t.prompt.zh,"line")+'</div>';
+        if(t.hint) h += '<p class="why">'+esc(t.hint)+'</p>';
+        h += '<button class="btn ghost" data-model="'+i+'">Say your answer out loud, then check</button><div class="model" id="model-'+i+'" hidden>'+line3(t.model)+'</div></div>';
+      });
+      h += '</section>';
+    }
+
+    if(L.quiz && L.quiz.length){
+      h += '<section class="sec"><div class="sechead"><h2>Quick quiz</h2><span class="score" id="score"></span></div>';
+      L.quiz.forEach((q,qi) => {
+        h += '<div class="q" data-q="'+qi+'"><div class="qt">'+(qi+1)+'. '+esc(q.q)+'</div><div class="opts">';
+        q.options.forEach((opt,oi) => {
+          const o = (opt && typeof opt === "object") ? opt : { zh: opt };
+          h += '<button class="opt" data-qi="'+qi+'" data-oi="'+oi+'"><span class="zh">'+esc(o.zh)+'</span>'+(o.py?'<span class="op">'+esc(o.py)+'</span>':'')+(o.en?'<span class="oen" hidden>'+esc(o.en)+'</span>':'')+'</button>';
+        });
+        h += '</div><p class="why" hidden id="why-'+qi+'">'+esc(q.explain||"")+'</p></div>';
+      });
+      h += '</section>';
+    }
+
+    if(L.useToday){
+      h += '<section class="today"><div><h2>Use it today</h2>'+line3(L.useToday)+(L.useToday.tip?'<div class="e" style="opacity:.85;margin-top:4px">'+esc(L.useToday.tip)+'</div>':'')+'</div>'+playBtn(L.useToday.zh,"sentence")+'</section>';
+    }
+    h += '</article>';
+    return h;
+  }
+
+  function dialogueBar(key){
+    return '<div class="chatbar"><button class="toggle" id="t-prac" aria-pressed="'+prefs.practice+'">Practice my lines</button>'+(canSpeak?'<button class="toggle" data-playall="'+esc(key)+'">Play all</button>':'')+'</div>';
+  }
+  function dialogueHTML(D){
+    let h = (D.setting?'<p class="setting">'+esc(D.setting)+'</p>':'')+'<div class="chat">';
+    D.lines.forEach(ln => {
+      const you = ln.who === "you";
+      h += '<div class="msg '+(you?'you':'other')+'"><span class="who">'+esc(you?"You":(ln.name||"Them"))+'</span>';
+      h += '<button class="bubble'+(you&&prefs.practice?' hidden-line':'')+'" data-say="'+esc(ln.zh)+'"><span class="zh" lang="zh-CN">'+esc(ln.zh)+'</span><span class="p">'+esc(ln.py)+'</span>';
+      h += '<span class="e">'+esc(ln.en)+'</span></button></div>';
+    });
+    return h + '</div><p class="note" style="text-align:left;margin:0">Tap any line to hear it.'+(prefs.practice?' Read the English, say your line in Chinese, then tap to check.':'')+'</p>';
+  }
+
+  function renderDialogues(){
+    const withD = lessons.filter(L => L.dialogue && L.dialogue.lines && L.dialogue.lines.length);
+    if(!withD.length) return emptyHTML();
+    let h = '<div class="wrap" style="gap:30px"><div class="sechead"><p class="setting" style="margin:0">'+withD.length+' dialogue'+(withD.length===1?'':'s')+', newest first</p><button class="toggle" id="t-prac" aria-pressed="'+prefs.practice+'">Practice my lines</button></div>';
+    withD.forEach(L => {
+      h += '<section class="sec"><div class="sechead"><div><h2>'+esc(fmtDate(L.date))+'</h2><div class="t" style="font-weight:600">'+esc(L.title||L.theme||"")+'</div></div>'+(canSpeak?'<button class="toggle" data-playall="'+esc(L.date)+'">Play all</button>':'')+'</div>'+dialogueHTML(L.dialogue)+'</section>';
+    });
+    return h + '</div>';
+  }
+
+  function patternHTML(S, label){
+    let h = '<section class="sec"><h2>'+esc(label)+'</h2><div class="pattern"><div class="big" lang="zh-CN">'+esc(S.pattern)+'<small>'+esc(S.pinyin)+' · '+esc(S.meaning)+'</small></div>';
+    if(S.explain) h += '<p class="explain">'+esc(S.explain)+'</p>';
+    (S.examples||[]).forEach(ex => {
+      h += '<div class="exrow'+(ex.forHer?' her':'')+'"><div>'+(ex.forHer?'<span class="tag">Say it to her</span>':'')+line3(ex)+'</div>'+playBtn(ex.zh,"example")+'</div>';
+    });
+    if(S.tip) h += '<p class="why">'+esc(S.tip)+'</p>';
+    return h + '</div></section>';
+  }
+
+  function renderAll(){
+    if(!lessons.length) return emptyHTML();
+    let h = '<div class="list">';
+    lessons.forEach(L => {
+      h += '<button class="item" data-go="'+esc(L.date)+'"><div><div class="d">'+esc(fmtDate(L.date))+'</div><div class="t">'+esc(L.title||"")+'</div></div><span class="chip'+(L.dayType==="revision"?' rev':'')+'">'+(L.dayType==="revision"?"Revision":(L.theme||"New"))+'</span></button>';
+    });
+    return h + '</div>';
+  }
+  const emptyHTML = () => '<div class="empty"><div class="seal">学<span class="seal-cap">xué · learn</span></div><p>No lessons yet. Your next lesson arrives at 8 AM, and you\'ll get a WhatsApp message with the link.</p></div>';
+
+  // ---------- my words ----------
+  let onlyNew = false;
+  const openW = new Set();   // words whose pinyin is expanded in My words
+  let test = null;   // {deck:[word], i, shown, got, missed:[]}
+  function collect(){
+    const byHan = new Map(), pats = [];
+    [...lessons].reverse().forEach(L => {
+      if(L.dayType === "revision") return;
+      (L.words||[]).forEach(w => { if(w && w.hanzi && !byHan.has(w.hanzi)) byHan.set(w.hanzi, Object.assign({}, w, {theme:L.theme||"Other", date:L.date})); });
+      if(L.structure) pats.push(Object.assign({}, L.structure, {date:L.date, theme:L.theme}));
+    });
+    return { words:[...byHan.values()], pats };
+  }
+  const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+
+  function renderWords(){
+    if(test) return renderTest();
+    const { words, pats } = collect();
+    if(!words.length) return emptyHTML();
+    const k = words.filter(w => known.has(w.hanzi)).length;
+    const list = onlyNew ? words.filter(w => !known.has(w.hanzi)) : words;
+    let h = '<div class="wrap" style="gap:22px">';
+    h += '<div class="stats"><div class="stat"><b>'+words.length+'</b><span>words learned</span></div><div class="stat"><b>'+pats.length+'</b><span>patterns</span></div><div class="stat"><b>'+k+'</b><span>ticked as known</span></div></div>' + syncNote();
+    h += '<div class="wbar"><button class="toggle" data-act="wfilter" aria-pressed="'+onlyNew+'">Only words I haven\'t ticked</button>';
+    h += list.length ? '<button class="btn" data-act="test-start">Test me on '+list.length+' word'+(list.length===1?'':'s')+'</button>' : '';
+    h += '</div>';
+    if(!list.length){ h += '<div class="empty"><div class="seal">棒<span class="seal-cap">bàng · great</span></div><p>You\'ve ticked every word as known. Turn the filter off to review them all.</p></div>'; }
+    const groups = new Map();
+    list.forEach(w => { if(!groups.has(w.theme)) groups.set(w.theme, []); groups.get(w.theme).push(w); });
+    groups.forEach((ws, theme) => {
+      h += '<section class="sec"><h2>'+esc(theme)+' · '+ws.length+'</h2><div class="wl">';
+      ws.forEach(w => {
+        h += wordRow(w, false);
+      });
+      h += '</div></section>';
+    });
+    if(pats.length){
+      h += '<section class="sec"><h2>Sentence patterns · '+pats.length+'</h2><div class="list">';
+      pats.forEach(p => { h += '<button class="item patitem" data-go="'+esc(p.date)+'"><div><div class="t" lang="zh-CN">'+esc(p.pattern)+'</div><div class="d">'+esc(p.pinyin)+' · '+esc(p.meaning)+'</div></div><span class="chip rev">'+esc(p.theme||"")+'</span></button>'; });
+      h += '</div></section>';
+    }
+    return h + '</div>';
+  }
+
+  // one word row; inReview adds the example sentence to the dropdown and a "Got it" button that removes it from the list
+  function wordRow(w, inReview){
+    const isK = known.has(w.hanzi), isO = openW.has(w.hanzi), isR = review.has(w.hanzi);
+    let h = '<div class="wrow'+(isK && !inReview?' known':'')+(isO?' open':'')+'"><button class="wtog" data-wtog="'+esc(w.hanzi)+'" aria-expanded="'+isO+'"><span class="han" lang="zh-CN">'+esc(w.hanzi)+'</span>';
+    h += '<span class="wtext"><span class="mean">'+esc(w.english)+'</span><span class="pywrap"><div><div class="py">'+colorPinyin(w.pinyin)+'</div>';
+    if(inReview && w.example) h += '<div class="wex"><span class="zh" lang="zh-CN">'+esc(w.example.zh)+'</span><span>'+esc(w.example.py)+'</span><span>'+esc(w.example.en)+'</span></div>';
+    h += '</div></span></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="side">'+playBtn(w.hanzi, w.hanzi);
+    if(inReview){
+      h += '<button class="icon gotit" data-unrev="'+esc(w.hanzi)+'" aria-label="Got it, remove from review list" title="Got it">'+ICON.check+'</button>';
+    } else {
+      h += '<button class="icon'+(isR?' rev-on':'')+'" data-rev="'+esc(w.hanzi)+'" aria-pressed="'+isR+'" aria-label="'+(isR?'Remove from':'Add to')+' review list" title="'+(isR?'In your review list':'Add to review list')+'">'+ICON.flag+'</button>';
+      h += '<button class="icon'+(isK?' on':'')+'" data-known="'+esc(w.hanzi)+'" aria-pressed="'+isK+'" aria-label="I know this word">'+ICON.check+'</button>';
+    }
+    return h + '</div></div>';
+  }
+
+  function renderReview(){
+    if(test) return renderTest();
+    const list = collect().words.filter(w => review.has(w.hanzi));
+    let h = '<div class="wrap" style="gap:18px">';
+    if(!list.length){
+      return h + '<div class="empty"><div class="seal">复习<span class="seal-cap">fùxí · review</span></div><p>Your review list is empty. In <b>My words</b>, tap the flag on any word you keep forgetting and it will show up here.</p></div>'+syncNote()+'</div>';
+    }
+    h += '<div class="wbar"><p class="setting" style="margin:0"><b style="color:var(--ink)">'+list.length+'</b> word'+(list.length===1?'':'s')+' to review. Tap a word to see its pinyin and an example. Tap ✓ once you\'ve got it.</p>';
+    h += '<button class="btn" data-act="test-review">Test me on these</button></div>';
+    h += '<div class="wl">'+list.map(w => wordRow(w, true)).join("")+'</div>';
+    return h + syncNote() + '</div>';
+  }
+
+  function renderTest(){
+    const n = test.deck.length;
+    if(test.i >= n){
+      return '<div class="flash"><div class="seal" style="font-family:var(--f-brush);font-size:56px;color:var(--accent);line-height:1">'+(test.got===n?'棒':'加油')+'</div><p style="margin:0;font-size:20px;font-weight:600">You got '+test.got+' of '+n+'</p>'
+        +'<p class="why" style="margin:0">'+(test.got===n?'bàng · great job':'jiāyóu · keep going')+'</p>'
+        +'<p class="why">'+(test.missed.length ? 'Missed: '+test.missed.map(w=>'<span class="zh">'+esc(w.hanzi)+'</span> '+esc(w.pinyin)+' ('+esc(w.english)+')').join(", ") : 'Every word, nice work.')+'</p>'
+        +'<div class="flashbar">'+(test.missed.length?'<button class="btn" data-act="test-missed">Practise the '+test.missed.length+' I missed</button>':'')+'<button class="btn ghost" data-act="test-exit">Back to my words</button></div></div>';
+    }
+    const w = test.deck[test.i];
+    let h = '<div class="wrap" style="gap:14px"><div class="prog"><span>Card '+(test.i+1)+' of '+n+'</span><button class="toggle" data-act="test-exit">Stop</button></div><div class="bar"><i style="width:'+Math.round(test.i/n*100)+'%"></i></div>';
+    h += '<div class="flash"><div class="han" lang="zh-CN">'+esc(w.hanzi)+'</div><div class="py">'+colorPinyin(w.pinyin)+'</div>'+playBtn(w.hanzi, w.hanzi);
+    if(test.shown){
+      h += '<div class="mean">'+esc(w.english)+'</div>';
+      if(w.example) h += '<div class="ex"><div class="zh" lang="zh-CN">'+esc(w.example.zh)+'</div><div>'+esc(w.example.py)+'</div><div>'+esc(w.example.en)+'</div></div>';
+    } else {
+      h += '<p class="why">Say what it means, then check.</p>';
+    }
+    h += '</div><div class="flashbar">';
+    h += test.shown ? '<button class="btn ghost" data-act="test-again">Not yet</button><button class="btn" data-act="test-got">Got it</button>' : '<button class="btn" data-act="test-show">Show meaning</button>';
+    return h + '</div></div>';
+  }
+
+  function render(){
+    document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === mode));
+    const rc = $("#revcount"); rc.textContent = review.size; rc.hidden = !review.size;
+    if(mode === "all"){ view.innerHTML = renderAll(); return; }
+    if(mode === "words"){ view.innerHTML = lessons.length ? renderWords() : emptyHTML(); return; }
+    if(mode === "dialogues"){ view.innerHTML = renderDialogues(); return; }
+    if(mode === "review"){ view.innerHTML = lessons.length ? renderReview() : emptyHTML(); return; }
+    if(!lessons.length){ view.innerHTML = emptyHTML(); return; }
+    const L = lessons.find(l => l.date === current) || lessons[0];
+    current = L.date;
+    Object.keys(quizState).forEach(k => delete quizState[k]);
+    view.innerHTML = renderLesson(L);
+  }
+
+  // ---------- routing ----------
+  function fromHash(){
+    const m = /^#lesson-(\d{4}-\d{2}-\d{2})$/.exec(location.hash);
+    if(m){ current = m[1]; mode = "lesson"; }
+    else if(location.hash === "#all"){ mode = "all"; }
+    else if(location.hash === "#words"){ mode = "words"; }
+    else if(location.hash === "#dialogues"){ mode = "dialogues"; }
+    else if(location.hash === "#review"){ mode = "review"; }
+  }
+  window.addEventListener("hashchange", () => { fromHash(); render(); window.scrollTo(0,0); });
+  fromHash();
+
+  // ---------- events ----------
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => {
+    mode = b.dataset.tab; test = null;
+    if(mode === "lesson"){ if(!current && lessons[0]) current = lessons[0].date; location.hash = current ? "lesson-"+current : ""; }
+    else location.hash = mode;
+    render(); window.scrollTo(0,0);
+  }));
+
+  const quizState = {};
+  view.addEventListener("click", e => {
+    const t = e.target.closest("button"); if(!t) return;
+    if(t.dataset.say !== undefined){ e.stopPropagation(); t.classList.remove("hidden-line"); try{ speechSynthesis.cancel(); }catch(_){} speak(t.dataset.say); return; }
+    if(t.dataset.playall !== undefined){ const L = lessons.find(l=>l.date===t.dataset.playall); if(L&&L.dialogue) speakQueue(L.dialogue.lines.map(l=>l.zh)); return; }
+    if(t.dataset.known !== undefined){
+      const k = t.dataset.known; known.has(k) ? known.delete(k) : known.add(k); saveProgress();
+      if(mode === "words"){ render(); return; }
+      const card = t.closest(".word"); const on = known.has(k);
+      card.classList.toggle("known", on); t.classList.toggle("on", on); t.setAttribute("aria-pressed", on); return;
+    }
+    if(t.dataset.rev !== undefined){
+      const k = t.dataset.rev; review.has(k) ? review.delete(k) : review.add(k); saveReview(); render(); return;
+    }
+    if(t.dataset.unrev !== undefined){
+      review.delete(t.dataset.unrev); openW.delete(t.dataset.unrev); saveReview(); render(); return;
+    }
+    if(t.dataset.wtog !== undefined){
+      const k = t.dataset.wtog, row = t.closest(".wrow"), on = row.classList.toggle("open");
+      on ? openW.add(k) : openW.delete(k); t.setAttribute("aria-expanded", on); return;
+    }
+    const act = t.dataset.act;
+    if(act){
+      if(act === "wfilter"){ onlyNew = !onlyNew; }
+      else if(act === "test-start"){ const { words } = collect(); const list = onlyNew ? words.filter(w => !known.has(w.hanzi)) : words; test = { deck: shuffle(list), i:0, shown:false, got:0, missed:[] }; }
+      else if(act === "test-review"){ const list = collect().words.filter(w => review.has(w.hanzi)); test = { deck: shuffle(list), i:0, shown:false, got:0, missed:[] }; }
+      else if(act === "test-show"){ test.shown = true; }
+      else if(act === "test-got"){ const w = test.deck[test.i]; known.add(w.hanzi); saveProgress(); test.got++; test.i++; test.shown = false; }
+      else if(act === "test-again"){ test.missed.push(test.deck[test.i]); test.i++; test.shown = false; }
+      else if(act === "test-missed"){ test = { deck: shuffle(test.missed), i:0, shown:false, got:0, missed:[] }; }
+      else if(act === "test-exit"){ test = null; }
+      render(); window.scrollTo(0,0); return;
+    }
+    if(t.dataset.open !== undefined){ const m = $("#more-"+t.dataset.open); if(m){ m.hidden = false; t.remove(); } return; }
+    if(t.id === "t-mean"){ prefs.hideMeaning = !prefs.hideMeaning; render(); return; }
+    if(t.id === "t-prac"){ prefs.practice = !prefs.practice; render(); return; }
+    if(t.dataset.model !== undefined){ const m = $("#model-"+t.dataset.model); if(m){ m.hidden = false; t.remove(); } return; }
+    if(t.dataset.qi !== undefined){
+      const qi = +t.dataset.qi, oi = +t.dataset.oi; if(quizState[qi] !== undefined) return;
+      const L = lessons.find(l=>l.date===current); const q = L.quiz[qi]; quizState[qi] = oi === q.answer;
+      t.closest(".opts").querySelectorAll(".opt").forEach((b,i) => { if(i===q.answer) b.classList.add("right"); else if(i===oi) b.classList.add("wrong"); b.disabled = true; b.querySelectorAll(".oen").forEach(x => x.hidden = false); });
+      const w = $("#why-"+qi); if(w && q.explain) w.hidden = false;
+      const done = Object.keys(quizState).length, right = Object.values(quizState).filter(Boolean).length;
+      $("#score").textContent = right+" / "+done+(done===L.quiz.length?" correct":"");
+      return;
+    }
+    if(t.dataset.go){ location.hash = "lesson-"+t.dataset.go; return; }
+  });
+
+  // ---------- data ----------
+  function setStatus(msg){ statusEl.textContent = msg || ""; statusEl.hidden = !msg; }
+  // ---------- encrypted lessons (AES-GCM, key from passcode via PBKDF2) ----------
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  let idx = null;
+  async function keyFor(pass){
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey({name:"PBKDF2", salt:b64(idx.salt), iterations:idx.iter, hash:"SHA-256"}, base, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+  }
+  async function decryptLesson(key, date){
+    const r = await fetch("lessons/"+date+".json", {cache:"no-cache"}); if(!r.ok) throw new Error("missing");
+    const e = await r.json();
+    const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:b64(e.iv)}, key, b64(e.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  function lockScreen(msg){
+    view.innerHTML = '<div class="empty"><div class="seal">锁<span class="seal-cap">suǒ · lock</span></div><p>Enter your passcode to open your lessons. You only need to do this once on this phone.</p>'
+      + '<form id="unlock" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px"><input id="pass" type="password" autocomplete="current-password" placeholder="Passcode" style="font:inherit;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0;width:190px">'
+      + '<button class="btn" type="submit">Open</button></form>' + (msg ? '<p style="color:var(--bad);margin-top:10px">'+msg+'</p>' : '') + '</div>';
+    const f = document.getElementById("unlock");
+    f.addEventListener("submit", ev => { ev.preventDefault(); load(document.getElementById("pass").value.trim(), true); });
+    document.getElementById("pass").focus();
+  }
+  async function load(pass, fresh){
+    try{
+      const r = await fetch("lessons/index.json", {cache:"no-cache"}); idx = await r.json();
+    }catch(e){ view.innerHTML = '<div class="empty"><p>Can\'t reach your lessons. Check your connection and reopen the app.</p></div>'; return; }
+    if(!pass){ lockScreen(""); return; }
+    let key; const dates = [...idx.dates].sort().reverse();
+    try{ key = await keyFor(pass); if(dates.length) lessons = [await decryptLesson(key, dates[0])]; }
+    catch(e){ store.set("dc-pass", null); lockScreen(fresh ? "That passcode didn't work. Try again." : ""); return; }
+    store.set("dc-pass", pass);
+    if(fresh){ view.innerHTML = ""; }
+    render();
+    const rest = await Promise.all(dates.slice(1).map(d => decryptLesson(key, d).catch(() => null)));
+    lessons = lessons.concat(rest.filter(l => l && l.date)).sort((a,b) => a.date < b.date ? 1 : -1);
+    if(!navigator.onLine) setStatus("You're offline, so these are your saved lessons.");
+    render();
+  }
+  load(store.get("dc-pass", null), false);
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+
+</body></html>
